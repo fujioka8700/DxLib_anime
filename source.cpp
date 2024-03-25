@@ -14,7 +14,21 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	printfDx("Hello World\n");
+	int r, g, b;
+
+	r = 255;
+	b = 0;
+
+	for (int y = 0; y < 256; y++, r--)
+	{
+		g = 255;
+		for (int x = 0; x < 256; x++, g--)
+		{
+			DrawPixel(192 + x, 112 + y, GetColor(r, g, b));
+		}
+
+	}
+
 	WaitKey();
 
 	DxLib_End();
