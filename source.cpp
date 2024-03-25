@@ -24,6 +24,11 @@ int WINAPI WinMain(
 		int y = (int)(sin(M_PI * x / 180.0f) * 100);
 		DrawPixel(320 + x, 240 - y, GetColor(255, 0, 0));
 	}
+	for (int x = -290; x < 290; x+=10)
+	{
+		int y = (int)(sin(M_PI * x / 180.0f) * 100);
+		DrawCircle(320 + x, 240 - y, 3, GetColor(255, 0, 0), TRUE);
+	}
 
 	WaitKey();
 
