@@ -24,6 +24,21 @@ int WINAPI WinMain(
 	DrawLineAA(0, 320, 640, 320, GetColor(0, 0, 255), 3);
 												  
 	WaitKey();
+	ClearDrawScreen();
+
+	DrawBox(55, 90, 155, 190, GetColor(255, 255, 0), TRUE);
+	DrawBoxAA(55, 280, 155, 380, GetColor(255, 255, 0), TRUE);
+
+	DrawCircle(255, 140, 50, GetColor(255, 0, 255), TRUE);
+	DrawCircleAA(255, 330, 50, 32, GetColor(255, 0, 255), TRUE);
+
+	DrawOval(405, 140, 50, 30, GetColor(0, 255, 255), TRUE);
+	DrawOvalAA(405, 330, 50, 30, 32, GetColor(0, 255, 255), TRUE);
+
+	DrawTriangle(555, 90, 505, 190, 605, 190, GetColor(255, 255, 255), TRUE);
+	DrawTriangleAA(555, 280, 505, 380, 605, 380, GetColor(255, 255, 255), TRUE);
+
+	WaitKey();
 
 	DxLib_End();
 	return 0;
