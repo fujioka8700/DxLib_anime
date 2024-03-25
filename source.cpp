@@ -14,21 +14,15 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	int r, g, b;
+	DrawLine(0, 0, 640, 480, GetColor(255, 0, 0), 3);
+	DrawLineAA(640, 0, 0, 480, GetColor(255, 0, 0), 3);
 
-	r = 255;
-	b = 0;
+	DrawLine(220, 0, 220, 480, GetColor(0, 255, 0), 3);
+	DrawLineAA(420, 0, 420, 480, GetColor(0, 255, 0), 3);
 
-	for (int y = 0; y < 256; y++, r--)
-	{
-		g = 255;
-		for (int x = 0; x < 256; x++, g--)
-		{
-			DrawPixel(192 + x, 112 + y, GetColor(r, g, b));
-		}
-
-	}
-
+	DrawLine(0, 160, 640, 160, GetColor(0, 0, 255), 3);
+	DrawLineAA(0, 320, 640, 320, GetColor(0, 0, 255), 3);
+												  
 	WaitKey();
 
 	DxLib_End();
