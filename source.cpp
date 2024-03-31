@@ -16,54 +16,11 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	DrawLine(320, 110, 320, 370, GetColor(128, 128, 128));
-	DrawLine(30, 240, 610, 240, GetColor(128, 128, 128));
-
-	for (int x = -290; x < 290; x++)
+	for (size_t x = 0; x < 640; x += 2)
 	{
-		int y = (int)(sin(M_PI * x / 180.0f) * 100);
-		DrawPixel(320 + x, 240 - y, GetColor(255, 0, 0));
-	}
-	for (int x = -290; x < 290; x+=10)
-	{
-		int y = (int)(sin(M_PI * x / 180.0f) * 100);
-		DrawCircle(320 + x, 240 - y, 3, GetColor(255, 0, 0), TRUE);
-	}
+		int y = (int)(80.0 * sin(M_PI * x * 4.0 / 180.0));
 
-	WaitKey();
-	ClearDrawScreen();
-
-	DrawLine(320, 110, 320, 370, GetColor(128, 128, 128));
-	DrawLine(30, 240, 610, 240, GetColor(128, 128, 128));
-
-	for (int x = -290; x < 290; x++)
-	{
-		int y = (int)(cos(M_PI * x / 180.0f) * 100);
-		DrawPixel(320 + x, 240 - y, GetColor(0, 255, 0));
-	}
-	for (int x = -290; x < 290; x += 10)
-	{
-		int y = (int)(cos(M_PI * x / 180.0f) * 100);
-		DrawCircle(320 + x, 240 - y, 3, GetColor(0, 255, 0), TRUE);
-	}
-
-	WaitKey();
-	ClearDrawScreen();
-
-	DrawLine(320, 110, 320, 370, GetColor(128, 128, 128));
-	DrawLine(30, 240, 610, 240, GetColor(128, 128, 128));
-
-	for (int r = -290; r < 290; r++)
-	{
-		int x = (int)(cos(M_PI * r / 180.0f) * 100);
-		int y = (int)(sin(M_PI * r / 180.0f) * 100);
-		DrawPixel(320 + x, 240 - y, GetColor(0, 0, 255));
-	}
-	for (int r = -290; r < 290; r += 10)
-	{
-		int x = (int)(cos(M_PI * r / 180.0f) * 100);
-		int y = (int)(sin(M_PI * r / 180.0f) * 100);
-		DrawCircle(320 + x, 240 - y, 3, GetColor(0, 0, 255), TRUE);
+		DrawCircle(x, 240 - y, 3, GetColor(255, 255, 0), TRUE);
 	}
 
 	WaitKey();
