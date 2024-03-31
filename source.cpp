@@ -48,6 +48,26 @@ int WINAPI WinMain(
 	}
 
 	WaitKey();
+	ClearDrawScreen();
+
+	DrawLine(320, 110, 320, 370, GetColor(128, 128, 128));
+	DrawLine(30, 240, 610, 240, GetColor(128, 128, 128));
+
+	for (int r = -290; r < 290; r++)
+	{
+		int x = (int)(cos(M_PI * r / 180.0f) * 100);
+		int y = (int)(sin(M_PI * r / 180.0f) * 100);
+		DrawPixel(320 + x, 240 - y, GetColor(0, 0, 255));
+	}
+	for (int r = -290; r < 290; r += 10)
+	{
+		int x = (int)(cos(M_PI * r / 180.0f) * 100);
+		int y = (int)(sin(M_PI * r / 180.0f) * 100);
+		DrawCircle(320 + x, 240 - y, 3, GetColor(0, 0, 255), TRUE);
+	}
+
+	WaitKey();
+
 
 	DxLib_End();
 	return 0;
