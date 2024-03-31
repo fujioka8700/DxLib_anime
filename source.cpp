@@ -1,114 +1,18 @@
-#include <math.h>
 #include <Dxlib.h>
 
-typedef struct {
-	float x, y;
-	float length;
-} Pos;
-
-void LeftDownRight(int n, Pos* p);
-void UpRightDown(int n, Pos* p);
-void RightUpLeft(int n, Pos* p);
-void DownLeftUp(int n, Pos* p);
-
-void Line(float x1, float y1, float x2, float y2)
+void FpsDraw(LONGLONG* p)
 {
-	const int STEP = 64;
-	const int MAX = 256 / STEP;
-	static int r = MAX, g = MAX, b = MAX;
-	static int rDir = -1, gDir = -1, bDir = -1;
+	static int Fps = 0, FpsCnt = 0;
+	LONGLONG now = GetNowHiPerformanceCount();
 
-	DrawLineAA(x1, y1, x2, y2,
-		GetColor(r * STEP - 1, g * STEP - 1, b * STEP - 1));
-
-	if ((r += rDir) >= MAX || r <= 0)
+	FpsCnt++;
+	if (now - *p > 1000000)
 	{
-		r = (r <= 0) ? 1 : MAX;
-		rDir *= -1;
-		if ((g += gDir) >= MAX || g <= 0)
-		{
-			gDir *= -1;
-			if ((b += bDir) >= MAX || b <= 0)
-			{
-				b = (b <= 0) ? 1 : MAX;
-				bDir *= -1;
-			}
-		}
+		Fps = FpsCnt;
+		FpsCnt = 0;
+		*p = now;
 	}
-}
-
-void GoRight(Pos* p)
-{
-	Line(p->x, p->y, p->x + p->length, p->y);
-	p->x += p->length;
-}
-void GoLeft(Pos* p)
-{
-	Line(p->x, p->y, p->x - p->length, p->y);
-	p->x -= p->length;
-}
-void GoUp(Pos* p)
-{
-	Line(p->x, p->y, p->x, p->y - p->length);
-	p->y -= p->length;
-}
-void GoDown(Pos* p)
-{
-	Line(p->x, p->y, p->x, p->y + p->length);
-	p->y += p->length;
-}
-
-void LeftDownRight(int n, Pos *p)
-{
-	if (n > 0)
-	{
-		DownLeftUp(n - 1, p);
-		GoLeft(p);
-		LeftDownRight(n - 1, p);
-		GoDown(p);
-		LeftDownRight(n - 1, p);
-		GoRight(p);
-		UpRightDown(n - 1, p);
-	}
-}
-void UpRightDown(int n, Pos* p)
-{
-	if (n > 0)
-	{
-		RightUpLeft(n - 1, p);
-		GoUp(p);
-		UpRightDown(n - 1, p);
-		GoRight(p);
-		UpRightDown(n - 1, p);
-		GoDown(p);
-		LeftDownRight(n - 1, p);
-	}
-}
-void RightUpLeft(int n, Pos* p)
-{
-	if (n > 0)
-	{
-		UpRightDown(n - 1, p);
-		GoRight(p);
-		RightUpLeft(n - 1, p);
-		GoUp(p);
-		RightUpLeft(n - 1, p);
-		GoLeft(p);
-		DownLeftUp(n - 1, p);
-	}
-}
-void DownLeftUp(int n, Pos* p)
-{
-	if (n > 0)
-	{
-		LeftDownRight(n - 1, p);
-		GoDown(p);
-		DownLeftUp(n - 1, p);
-		GoLeft(p);
-		DownLeftUp(n - 1, p);
-		GoUp(p);
-		RightUpLeft(n - 1, p);
-	}
+	DrawFormatString(0, 0, GetColor(255, 255, 255), "FPS: %d", Fps);
 }
 
 int WINAPI WinMain(
@@ -125,20 +29,21 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	Pos pos;
-	const int size = 480;
-	const float startX = 80;
+	const float Radius = 20;
+	float x, y;
+	LONGLONG fpsTimer = GetNowHiPerformanceCount();
 
-	for (int n = 1; n <= 6; n++)
+	x = 0, y = 240;
+
+	while (ProcessMessage() == 0)
 	{
+		x += 0.002f;
+
 		ClearDrawScreen();
 
-		pos.length = (float)(size / pow(2, n));
-		pos.x = startX + size - pos.length / 2.0f;
-		pos.y = pos.length / 2.0f;
+		DrawCircleAA(x, y, Radius, 32, GetColor(255, 255, 0), TRUE);
 
-		LeftDownRight(n, &pos);
-		WaitKey();
+		FpsDraw(&fpsTimer);
 	}
 
 	DxLib_End();
