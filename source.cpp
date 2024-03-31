@@ -45,7 +45,7 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	Pos a, b;
+	Pos a, b, c;
 
 	a.x = 50.0f, a.y = 300.0f;
 	b.x = 590.0f, b.y = 300.0f;
@@ -54,6 +54,19 @@ int WINAPI WinMain(
 	{
 		ClearDrawScreen();
 		KochCurve(n, a, b);
+		WaitKey();
+	}
+
+	a.x = 120.0f, a.y = 358.0f;
+	b.x = 320.0f, b.y =  12.0f;
+	c.x = 520.0f, c.y = 358.0f;
+
+	for (int n = 0; n <= 5; n++)
+	{
+		ClearDrawScreen();
+		KochCurve(n, a, b);
+		KochCurve(n, b, c);
+		KochCurve(n, c, a);
 		WaitKey();
 	}
 
