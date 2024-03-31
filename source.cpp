@@ -1,48 +1,33 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <Dxlib.h>
 
 typedef struct {
-	float x;
-	float y;
+	float x, y;
 } Pos;
 
-struct {
-	int r;
-	int g;
-	int b;
-} Color_tb[6] = {
-	{  0, 128, 255},
-	{  0,  64, 255},
-	{128,  64, 255},
-	{128,   0, 255},
-	{ 64,   0, 255},
-	{  0, 128, 255},
-};
-
-void triangle(int n, Pos a, Pos b, Pos c)
+void KochCurve(int n, Pos a, Pos b)
 {
-	DrawTriangleAA(a.x, a.y, b.x, b.y, c.x, c.y,
-		GetColor(Color_tb[n].r, Color_tb[n].g, Color_tb[n].b), TRUE);
-	//WaitTimer(200);
-
-	if (n < 1)
+	if (n <= 0)
 	{
-		return;
+		DrawLineAA(a.x, a.y, b.x, b.y, GetColor(255, 255, 0));
 	}
 	else {
-		Pos d, e, f;
+		Pos c, d, e;
 
-		d.x = (a.x + b.x) / 2;
-		d.y = (a.y + b.y) / 2;
+		c.x = (2 * a.x + b.x) / 3;
+		c.y = (2 * a.y + b.y) / 3;
+		
+		d.x = (a.x + 2 * b.x) / 3;
+		d.y = (a.y + 2 * b.y) / 3;
 
-		e.x = (b.x + c.x) / 2;
-		e.y = (b.y + c.y) / 2;
+		e.x = c.x + (d.x - c.x) * (float)cos(M_PI * 60.0 / 180.0) + (d.y - c.y) * (float)sin(M_PI * 60.0 / 180.0);
+		e.y = c.y - (d.x - c.x) * (float)sin(M_PI * 60.0 / 180.0) + (d.y - c.y) * (float)cos(M_PI * 60.0 / 180.0);
 
-		f.x = (a.x + c.x) / 2;
-		f.y = (a.y + c.y) / 2;
-
-		triangle(n - 1, a, d, f);
-		triangle(n - 1, d, b, e);
-		triangle(n - 1, f, e, c);
+		KochCurve(n - 1, a, c);
+		KochCurve(n - 1, c, e);
+		KochCurve(n - 1, e, d);
+		KochCurve(n - 1, d, b);
 	}
 }
 
@@ -60,19 +45,17 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	Pos a, b, c;
+	Pos a, b;
 
-	a.x = 320.0f, a.y =  67.0f;
-	b.x = 120.0f, b.y = 413.0f;
-	c.x = 520.0f, c.y = 413.0f;
-	
-	for (int i = 0; i < 5; i++)
+	a.x = 50.0f, a.y = 300.0f;
+	b.x = 590.0f, b.y = 300.0f;
+
+	for (int n = 0; n <= 5; n++)
 	{
-		triangle(i, a, b, c);
+		ClearDrawScreen();
+		KochCurve(n, a, b);
 		WaitKey();
 	}
-
-	WaitKey();
 
 	DxLib_End();
 	return 0;
