@@ -1,35 +1,113 @@
-#define _USE_MATH_DEFINES
 #include <math.h>
 #include <Dxlib.h>
 
 typedef struct {
 	float x, y;
+	float length;
 } Pos;
 
-void KochCurve(int n, Pos a, Pos b)
+void LeftDownRight(int n, Pos* p);
+void UpRightDown(int n, Pos* p);
+void RightUpLeft(int n, Pos* p);
+void DownLeftUp(int n, Pos* p);
+
+void Line(float x1, float y1, float x2, float y2)
 {
-	if (n <= 0)
+	static const int STEP = 64;
+	static const int MAX = 256 / STEP;
+	static int r = MAX, g = MAX, b = MAX;
+	static int rDir = -1, gDir = -1, bDir = -1;
+
+	DrawLineAA(x1, y1, x2, y2,
+		GetColor(r * STEP - 1, g * STEP - 1, b * STEP - 1));
+
+	if ((r += rDir) >= MAX || r <= 0)
 	{
-		DrawLineAA(a.x, a.y, b.x, b.y, GetColor(0, 255, 255));
+		r = (r <= 0) ? 1 : MAX;
+		rDir *= -1;
+		if ((g += gDir) >= MAX || g <= 0)
+		{
+			gDir *= -1;
+			if ((b += bDir) >= MAX || b <= 0)
+			{
+				b = (b <= 0) ? 1 : MAX;
+				bDir *= -1;
+			}
+		}
 	}
-	else {
-		Pos c, d, e;
+}
 
-		c.x = (2 * a.x + b.x) / 3;
-		c.y = (2 * a.y + b.y) / 3;
-		
-		d.x = (a.x + 2 * b.x) / 3;
-		d.y = (a.y + 2 * b.y) / 3;
+void GoRight(Pos* p)
+{
+	Line(p->x, p->y, p->x + p->length, p->y);
+	p->x += p->length;
+}
+void GoLeft(Pos* p)
+{
+	Line(p->x, p->y, p->x - p->length, p->y);
+	p->x -= p->length;
+}
+void GoUp(Pos* p)
+{
+	Line(p->x, p->y, p->x, p->y - p->length);
+	p->y -= p->length;
+}
+void GoDown(Pos* p)
+{
+	Line(p->x, p->y, p->x, p->y + p->length);
+	p->y += p->length;
+}
 
-		e.x = c.x + (d.x - c.x) * (float)cos(M_PI * 60.0 / 180.0) + (d.y - c.y) * (float)sin(M_PI * 60.0 / 180.0);
-		e.y = c.y - (d.x - c.x) * (float)sin(M_PI * 60.0 / 180.0) + (d.y - c.y) * (float)cos(M_PI * 60.0 / 180.0);
-
-		DrawTriangleAA(c.x, c.y, d.x, d.y, e.x, e.y, GetColor(0, 255, 255), TRUE);
-
-		KochCurve(n - 1, a, c);
-		KochCurve(n - 1, c, e);
-		KochCurve(n - 1, e, d);
-		KochCurve(n - 1, d, b);
+void LeftDownRight(int n, Pos *p)
+{
+	if (n > 0)
+	{
+		DownLeftUp(n - 1, p);
+		GoLeft(p);
+		LeftDownRight(n - 1, p);
+		GoDown(p);
+		LeftDownRight(n - 1, p);
+		GoRight(p);
+		UpRightDown(n - 1, p);
+	}
+}
+void UpRightDown(int n, Pos* p)
+{
+	if (n > 0)
+	{
+		RightUpLeft(n - 1, p);
+		GoUp(p);
+		UpRightDown(n - 1, p);
+		GoRight(p);
+		UpRightDown(n - 1, p);
+		GoDown(p);
+		LeftDownRight(n - 1, p);
+	}
+}
+void RightUpLeft(int n, Pos* p)
+{
+	if (n > 0)
+	{
+		UpRightDown(n - 1, p);
+		GoRight(p);
+		RightUpLeft(n - 1, p);
+		GoUp(p);
+		RightUpLeft(n - 1, p);
+		GoLeft(p);
+		DownLeftUp(n - 1, p);
+	}
+}
+void DownLeftUp(int n, Pos* p)
+{
+	if (n > 0)
+	{
+		LeftDownRight(n - 1, p);
+		GoDown(p);
+		DownLeftUp(n - 1, p);
+		GoLeft(p);
+		DownLeftUp(n - 1, p);
+		GoUp(p);
+		RightUpLeft(n - 1, p);
 	}
 }
 
@@ -47,32 +125,19 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	Pos a, b, c;
+	Pos pos;
+	const int size = 480;
+	const float startX = 80;
 
-	a.x = 50.0f, a.y = 300.0f;
-	b.x = 590.0f, b.y = 300.0f;
-
-	for (int n = 0; n <= 5; n++)
-	{
-		ClearDrawScreen();
-		KochCurve(n, a, b);
-		WaitKey();
-	}
-
-	a.x = 120.0f, a.y = 358.0f;
-	b.x = 320.0f, b.y =  12.0f;
-	c.x = 520.0f, c.y = 358.0f;
-
-	for (int n = 0; n <= 5; n++)
+	for (int n = 1; n <= 6; n++)
 	{
 		ClearDrawScreen();
 
-		DrawBoxAA(105.0f, 0.0f, 535.0f, 640.0f, GetColor(0, 128, 255), TRUE);
-		DrawTriangle((int)a.x, (int)a.y, (int)b.x, (int)b.y, (int)c.x, (int)c.y, GetColor(0, 255, 255), TRUE);
+		pos.length = (float)(size / pow(2, n));
+		pos.x = startX + size - pos.length / 2.0f;
+		pos.y = pos.length / 2.0f;
 
-		KochCurve(n, a, b);
-		KochCurve(n, b, c);
-		KochCurve(n, c, a);
+		LeftDownRight(n, &pos);
 		WaitKey();
 	}
 
