@@ -2,6 +2,38 @@
 #include <math.h>
 #include <Dxlib.h>
 
+typedef struct {
+	float x;
+	float y;
+} Pos;
+
+void triangle(int n, Pos a, Pos b, Pos c)
+{
+	DrawTriangleAA(a.x, a.y, b.x, b.y, c.x, c.y, GetColor(255, 255, 255), FALSE);
+	//WaitTimer(200);
+
+	if (n < 1)
+	{
+		return;
+	}
+	else {
+		Pos d, e, f;
+
+		d.x = (a.x + b.x) / 2;
+		d.y = (a.y + b.y) / 2;
+
+		e.x = (b.x + c.x) / 2;
+		e.y = (b.y + c.y) / 2;
+
+		f.x = (a.x + c.x) / 2;
+		f.y = (a.y + c.y) / 2;
+
+		triangle(n - 1, a, d, f);
+		triangle(n - 1, d, b, e);
+		triangle(n - 1, f, e, c);
+	}
+}
+
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -16,34 +48,16 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	// ‰¡U•‚Ì”gü
-	for (int x = 0; x < 640; x += 2)
+	Pos a, b, c;
+
+	a.x = 320.0f, a.y =  67.0f;
+	b.x = 120.0f, b.y = 413.0f;
+	c.x = 520.0f, c.y = 413.0f;
+	
+	for (int i = 0; i < 5; i++)
 	{
-		int y = (int)(80.0 * sin(M_PI * x * 4.0 / 180.0));
-
-		DrawCircle(x, 240 - y, 3, GetColor(255, 255, 0), TRUE);
-	}
-
-	WaitKey();
-	ClearDrawScreen();
-
-	// cU•‚Ì”gü
-	for (int y = 0; y < 480; y += 2)
-	{
-		int x = (int)(80.0 * sin(M_PI * y * 4.0 / 180.0));
-
-		DrawCircle(320 + x, y, 3, GetColor(255, 0, 255), TRUE);
-	}
-
-	WaitKey();
-	ClearDrawScreen();
-
-	// ‰QŠª‚«ü
-	for (int r = 0; r < 360 * 10; r += 5)
-	{
-		int x = (int)((r / 15.0) * cos(M_PI * r / 180.0f));
-		int y = (int)((r / 15.0) * sin(M_PI * r / 180.0f));
-		DrawCircle(320 + x, 240 - y, 3, GetColor(0, 255, 255), TRUE);
+		triangle(i, a, b, c);
+		WaitKey();
 	}
 
 	WaitKey();
