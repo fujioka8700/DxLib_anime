@@ -10,7 +10,7 @@ void KochCurve(int n, Pos a, Pos b)
 {
 	if (n <= 0)
 	{
-		DrawLineAA(a.x, a.y, b.x, b.y, GetColor(255, 255, 0));
+		DrawLineAA(a.x, a.y, b.x, b.y, GetColor(0, 255, 255));
 	}
 	else {
 		Pos c, d, e;
@@ -23,6 +23,8 @@ void KochCurve(int n, Pos a, Pos b)
 
 		e.x = c.x + (d.x - c.x) * (float)cos(M_PI * 60.0 / 180.0) + (d.y - c.y) * (float)sin(M_PI * 60.0 / 180.0);
 		e.y = c.y - (d.x - c.x) * (float)sin(M_PI * 60.0 / 180.0) + (d.y - c.y) * (float)cos(M_PI * 60.0 / 180.0);
+
+		DrawTriangleAA(c.x, c.y, d.x, d.y, e.x, e.y, GetColor(0, 255, 255), TRUE);
 
 		KochCurve(n - 1, a, c);
 		KochCurve(n - 1, c, e);
@@ -64,6 +66,10 @@ int WINAPI WinMain(
 	for (int n = 0; n <= 5; n++)
 	{
 		ClearDrawScreen();
+
+		DrawBoxAA(105.0f, 0.0f, 535.0f, 640.0f, GetColor(0, 128, 255), TRUE);
+		DrawTriangle((int)a.x, (int)a.y, (int)b.x, (int)b.y, (int)c.x, (int)c.y, GetColor(0, 255, 255), TRUE);
+
 		KochCurve(n, a, b);
 		KochCurve(n, b, c);
 		KochCurve(n, c, a);
