@@ -1,5 +1,5 @@
 //************************************************
-// DXライブラリ 練習編
+// DXライブラリ アニメーション
 // 作成日：2024/03/31
 // 作成者：fujioka8700
 // Copyright (c) fujioka8700 All rights reserved.
@@ -41,7 +41,6 @@ int WINAPI WinMain(
 #endif // !_DEBUG
 
 	ChangeWindowMode(TRUE);
-	SetWaitVSyncFlag(FALSE); // 垂直同期を無効化
 
 	if (DxLib_Init() == -1) return -1;
 
