@@ -28,6 +28,18 @@ void FpsDraw(LONGLONG* p)
 }
 
 //================================================
+// デルタタイムの計測
+//================================================
+float getDeltaTime(LONGLONG* p)
+{
+	LONGLONG now = GetNowHiPerformanceCount();
+	float    deltaTime = (float)(now - *p) / 1000000.0f;
+
+	*p = now;
+	return deltaTime;
+}
+
+//================================================
 // 主処理
 //================================================
 int WINAPI WinMain(
@@ -40,13 +52,16 @@ int WINAPI WinMain(
 	SetOutApplicationLogValidFlag(FALSE);
 #endif // !_DEBUG
 
-	ChangeWindowMode(TRUE);
+	ChangeWindowMode(TRUE);  // ウィンドウモード
+	SetWaitVSyncFlag(FALSE); // 垂直同期無し
 
 	if (DxLib_Init() == -1) return -1;
 
-	const float RADIUS = 20, SPEED = 0.01f;
-	float x, y, speed;
-	LONGLONG fpsTimer = GetNowHiPerformanceCount();
+	const float RADIUS = 20, SPEED = 640.0f / 2.0f;
+	float    x, y, speed;
+	LONGLONG fpsTimer, deltaTimer;
+
+	fpsTimer = deltaTimer = GetNowHiPerformanceCount();
 
 	x = RADIUS, y = 240;
 	speed = SPEED;
@@ -55,7 +70,9 @@ int WINAPI WinMain(
 
 	while (ProcessMessage() == 0)
 	{
-		x += speed;
+		float deltaTime = getDeltaTime(&deltaTimer);
+
+		x += speed * deltaTime; // フレームレートに左右されず、動くスピードを固定する
 		if (x + RADIUS >= 640.0f)
 		{
 			x = 640.0f - RADIUS;
