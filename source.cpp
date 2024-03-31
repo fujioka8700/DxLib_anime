@@ -5,9 +5,23 @@ typedef struct {
 	float y;
 } Pos;
 
+struct {
+	int r;
+	int g;
+	int b;
+} Color_tb[6] = {
+	{  0, 128, 255},
+	{  0,  64, 255},
+	{128,  64, 255},
+	{128,   0, 255},
+	{ 64,   0, 255},
+	{  0, 128, 255},
+};
+
 void triangle(int n, Pos a, Pos b, Pos c)
 {
-	DrawTriangleAA(a.x, a.y, b.x, b.y, c.x, c.y, GetColor(255, 255, 255), FALSE);
+	DrawTriangleAA(a.x, a.y, b.x, b.y, c.x, c.y,
+		GetColor(Color_tb[n].r, Color_tb[n].g, Color_tb[n].b), TRUE);
 	//WaitTimer(200);
 
 	if (n < 1)
