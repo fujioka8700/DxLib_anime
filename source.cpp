@@ -41,6 +41,7 @@ int WINAPI WinMain(
 #endif // !_DEBUG
 
 	ChangeWindowMode(TRUE);
+	SetWaitVSyncFlag(FALSE); // ‚’¼“¯Šú‚ğ–³Œø‰»
 
 	if (DxLib_Init() == -1) return -1;
 
