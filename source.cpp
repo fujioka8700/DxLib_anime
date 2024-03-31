@@ -13,8 +13,8 @@ void DownLeftUp(int n, Pos* p);
 
 void Line(float x1, float y1, float x2, float y2)
 {
-	static const int STEP = 64;
-	static const int MAX = 256 / STEP;
+	const int STEP = 64;
+	const int MAX = 256 / STEP;
 	static int r = MAX, g = MAX, b = MAX;
 	static int rDir = -1, gDir = -1, bDir = -1;
 
