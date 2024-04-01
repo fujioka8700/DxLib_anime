@@ -5,6 +5,8 @@
 // Copyright (c) fujioka8700 All rights reserved.
 //************************************************
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <Dxlib.h>
 
 //================================================
@@ -52,13 +54,14 @@ int WINAPI WinMain(
 	SetOutApplicationLogValidFlag(FALSE);
 #endif // !_DEBUG
 
-	ChangeWindowMode(TRUE);            // ウィンドウモード
-	SetMainWindowText("垂直同期有り"); // ウィンドウのタイトル
+	ChangeWindowMode(TRUE);              // ウィンドウモード
+	SetMainWindowText("アニメーション"); // ウィンドウのタイトル
 
 	if (DxLib_Init() == -1) return -1;
 
-	const float RADIUS = 20, SPEED = 640.0f / 2.0f;
+	const float RADIUS = 50, SPEED = 640.0f / 2.0f, SPEED_ANGLE = 360.0f / 2.0f;
 	float    x, y, speed;
+	float    angle, speedAngle;
 	LONGLONG fpsTimer, deltaTimer;
 
 	fpsTimer = deltaTimer = GetNowHiPerformanceCount();
@@ -66,25 +69,45 @@ int WINAPI WinMain(
 	x = RADIUS, y = 240;
 	speed = SPEED;
 
+	angle = 0;
+	speedAngle = SPEED_ANGLE;
+
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	while (ProcessMessage() == 0)
 	{
 		float deltaTime = getDeltaTime(&deltaTimer);
 
-		x += speed * deltaTime; // フレームレートに左右されず、動くスピードを固定する
+		x += speed * deltaTime;
 		if (x + RADIUS >= 640.0f)
 		{
 			x = 640.0f - RADIUS;
-			speed = -SPEED;
+			speed *= -1;
+			speedAngle *= -1;
 		}
 		else if (x - RADIUS < 0.0f) {
 			x = RADIUS;
-			speed = SPEED;
+			speed *= -1;
+			speedAngle *= -1;
+		}
+
+		angle += speedAngle * deltaTime;
+		if (angle >= 360.0f)
+		{
+			angle -= 360.0f;
 		}
 
 		ClearDrawScreen();
-		DrawCircleAA(x, y, RADIUS, 32, GetColor(255, 255, 0), TRUE);
+		DrawCircleAA(x, y, RADIUS, 32, GetColor(255, 255, 0), FALSE);
+
+		const int n = 10;
+		for (int i = 0; i < n; i++)
+		{
+			float dx = (float)(RADIUS * cos(M_PI * (angle + i * 180.0 / n) / 180.0));
+			float dy = (float)(RADIUS * sin(M_PI * (angle + i * 180.0 / n) / 180.0));
+			DrawLineAA(x + dx, y + dy, x - dx, y - dy, GetColor(255, 255, 0));
+		}
+
 		FpsDraw(&fpsTimer);
 
 		ScreenFlip();
