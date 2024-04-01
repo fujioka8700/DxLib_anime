@@ -1,6 +1,6 @@
 //************************************************
 // DXライブラリ アニメーション
-// 作成日：2024/03/31
+// 作成日：2024/04/01
 // 作成者：fujioka8700
 // Copyright (c) fujioka8700 All rights reserved.
 //************************************************
@@ -59,15 +59,12 @@ int WINAPI WinMain(
 
 	if (DxLib_Init() == -1) return -1;
 
-	const float RADIUS = 50, SPEED = 640.0f / 2.0f, SPEED_ANGLE = 360.0f / 2.0f;
-	float    x, y, speed;
+	const float RADIUS = 50, SPEED_ANGLE = 360.0f / 2.0f;
+	const float x = 320, y = 240;
 	float    angle, speedAngle;
 	LONGLONG fpsTimer, deltaTimer;
 
 	fpsTimer = deltaTimer = GetNowHiPerformanceCount();
-
-	x = RADIUS, y = 240;
-	speed = SPEED;
 
 	angle = 0;
 	speedAngle = SPEED_ANGLE;
@@ -78,19 +75,6 @@ int WINAPI WinMain(
 	{
 		float deltaTime = getDeltaTime(&deltaTimer);
 
-		x += speed * deltaTime;
-		if (x + RADIUS >= 640.0f)
-		{
-			x = 640.0f - RADIUS;
-			speed *= -1;
-			speedAngle *= -1;
-		}
-		else if (x - RADIUS < 0.0f) {
-			x = RADIUS;
-			speed *= -1;
-			speedAngle *= -1;
-		}
-
 		angle += speedAngle * deltaTime;
 		if (angle >= 360.0f)
 		{
@@ -98,14 +82,17 @@ int WINAPI WinMain(
 		}
 
 		ClearDrawScreen();
-		DrawCircleAA(x, y, RADIUS, 32, GetColor(255, 255, 0), FALSE);
+		
 
 		const int n = 10;
 		for (int i = 0; i < n; i++)
 		{
-			float dx = (float)(RADIUS * cos(M_PI * (angle + i * 180.0 / n) / 180.0));
-			float dy = (float)(RADIUS * sin(M_PI * (angle + i * 180.0 / n) / 180.0));
-			DrawLineAA(x + dx, y + dy, x - dx, y - dy, GetColor(255, 255, 0));
+			float dx = (float)(RADIUS * cos(M_PI * (angle + i * 360.0 / n) / 180.0));
+			float dy = (float)(RADIUS * sin(M_PI * (angle + i * 360.0 / n) / 180.0));
+			float ex = (float)(RADIUS * cos(M_PI * (angle + (i + 1) * 360.0 / n) / 180.0));
+			float ey = (float)(RADIUS * sin(M_PI * (angle + (i + 1) * 360.0 / n) / 180.0));
+			int color = 255 - i * (255 - 64) / n;
+			DrawTriangleAA(x, y, x + dx, y + dy, x + ex, y + ey, GetColor(color, color, 0), TRUE);
 		}
 
 		FpsDraw(&fpsTimer);
