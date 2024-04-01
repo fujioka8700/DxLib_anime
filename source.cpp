@@ -53,9 +53,7 @@ int WINAPI WinMain(
 #endif // !_DEBUG
 
 	ChangeWindowMode(TRUE);            // ウィンドウモード
-	SetWaitVSyncFlag(FALSE);           // 垂直同期無し
-	SetAlwaysRunFlag(TRUE);            // 非アクティブ動作
-	SetMainWindowText("垂直同期無し"); // ウィンドウのタイトル
+	SetMainWindowText("垂直同期有り"); // ウィンドウのタイトル
 
 	if (DxLib_Init() == -1) return -1;
 
