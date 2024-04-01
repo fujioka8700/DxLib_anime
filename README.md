@@ -1,1 +1,1 @@
-DxLib‚ÅƒAƒjƒ[ƒVƒ‡ƒ“B
+DxLibã§ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã€‚
